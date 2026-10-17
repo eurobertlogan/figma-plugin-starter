@@ -1,0 +1,276 @@
+/*
+ * O iframe do plugin é uma página simples: nenhum CSS do Figma é herdado.
+ * `themeColors: true` em figma.showUI() injeta as variáveis
+ * `--figma-color-*` abaixo, então o plugin segue o tema claro/escuro do
+ * editor. Os fallbacks são o que você vê se a UI for aberta fora do Figma.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --bg: var(--figma-color-bg, #ffffff);
+  --bg-secondary: var(--figma-color-bg-secondary, #f5f5f5);
+  --bg-hover: var(--figma-color-bg-hover, #eeeeee);
+  --text: var(--figma-color-text, #1e1e1e);
+  --text-secondary: var(--figma-color-text-secondary, #6b6b6b);
+  --border: var(--figma-color-border, #e6e6e6);
+  --accent: var(--figma-color-bg-brand, #0d99ff);
+  --accent-hover: var(--figma-color-bg-brand-hover, #0b87e0);
+  --on-accent: var(--figma-color-text-onbrand, #ffffff);
+  --danger: var(--figma-color-text-danger, #c42222);
+  --success: var(--figma-color-text-success, #1a7f4b);
+  --radius: 6px;
+  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 12px/18px var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  background: var(--bg-secondary);
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+/* Dois contadores: o que está selecionado e o que realmente será renomeado. */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-weight: 600;
+}
+
+.input,
+.select {
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 8px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: inherit;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.hint {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+/* Preview ao vivo dos primeiros PREVIEW_LIMIT resultados. */
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  max-height: 190px;
+  overflow-y: auto;
+}
+
+.preview-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.preview-count {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.preview-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.preview-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 6px;
+}
+
+.preview-from,
+.preview-to {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-from {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}
+
+.preview-to {
+  font-weight: 500;
+}
+
+.preview-arrow {
+  color: var(--text-secondary);
+}
+
+.empty {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.status {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+}
+
+.status--error {
+  color: var(--danger);
+  box-shadow: inset 0 0 0 1px currentColor;
+  background: transparent;
+}
+
+.status--success {
+  color: var(--success);
+}
+
+.failures {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--danger);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.button--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.button--primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.button--primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.button--secondary {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.button--secondary:hover {
+  background: var(--bg-hover);
+}
